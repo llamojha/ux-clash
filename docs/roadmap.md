@@ -27,28 +27,40 @@
 
 ---
 
-## Phase 0 — Foundation (Day 1-2)
+## Phase 0 — Foundation + Design System
 
-**Goal:** Deployable skeleton on CubePath with DB, auth, and basic routing.
+**Goal:** Deployable skeleton on CubePath with DB, auth, design system, and basic pages.
 
+### Infra & Setup
 - [ ] Next.js 15 project with App Router, TypeScript, Tailwind, shadcn/ui
 - [ ] PostgreSQL schema with Drizzle (users, challenges, submissions, likes, ai_scores)
 - [ ] NextAuth.js with GitHub OAuth
 - [ ] Docker Compose (Next.js + PostgreSQL)
 - [ ] Deploy to CubePath via Coolify
-- [ ] Basic layout shell: dark theme, nav, responsive structure
 - [ ] Seed 3 challenges for development
 
-**Deliverable:** App running on CubePath with login working and DB connected.
+### Design System
+- [ ] Dark arena theme: color palette (CSS variables), shadows, borders
+- [ ] Typography scale: headings, body, mono (for code/editor)
+- [ ] shadcn/ui theme customization to match arena aesthetic
+- [ ] Core layout components: page shell, section container, card, badge, score display
+- [ ] Responsive structure (desktop-first, browsable on mobile)
+
+### Pages (skeleton with real layout, placeholder content)
+- [ ] Home page: hero, featured challenge card, top entries area, leaderboard preview
+- [ ] Challenge page: brief layout (title, scenario, objective, viewport, constraints, CTA)
+- [ ] Basic nav: logo, challenge links, auth button
+
+**Deliverable:** App running on CubePath with login, DB, and a visually intentional dark arena UI that sets the tone for everything built on top.
 
 ---
 
-## Phase 1 — Core Loop (Day 3-5)
+## Phase 1 — Core Loop
 
 **Goal:** A user can see a challenge, open the editor, write code, preview it, and submit.
 
 - [ ] Challenge list page (home) — daily/weekly cards, active challenge highlighted
-- [ ] Challenge detail page — title, scenario, objective, viewport, constraints, CTA
+- [ ] Challenge detail page — real data from DB, styled with design system
 - [ ] Editor Arena page:
   - [ ] Monaco editor with HTML tab + CSS tab
   - [ ] Live preview panel (sandboxed iframe with Tailwind CDN)
@@ -62,7 +74,7 @@
 
 ---
 
-## Phase 2 — AI Scoring (Day 6-7)
+## Phase 2 — AI Scoring
 
 **Goal:** Every submission gets an AI score with rubric breakdown and feedback.
 
@@ -82,7 +94,7 @@
 
 ---
 
-## Phase 3 — Social + Leaderboard (Day 8-9)
+## Phase 3 — Social + Leaderboard
 
 **Goal:** Likes, leaderboard, and the competitive layer.
 
@@ -102,7 +114,7 @@
 
 ---
 
-## Phase 4 — Shareability + Public Pages (Day 10-11)
+## Phase 4 — Shareability + Public Pages
 
 **Goal:** Every submission is a shareable, beautiful public page with proper OG tags.
 
@@ -124,7 +136,7 @@
 
 ---
 
-## Phase 5 — Content + Polish (Day 12-13)
+## Phase 5 — Content + Polish
 
 **Goal:** Full challenge set, UX polish, hackathon submission readiness.
 
@@ -154,8 +166,23 @@
 | AI scoring inconsistent | Detailed rubric prompt with examples, structured JSON output, temperature=0 |
 | Sandbox security | CSP headers, srcdoc iframe, DOMPurify sanitization, no JS execution |
 | CubePath deploy issues | Docker Compose tested locally first, Coolify as fallback |
-| Time pressure | Phases 0-2 are non-negotiable core. Phase 3-4 can be simplified. Phase 5 content can be reduced to 5 challenges |
+| Scope pressure | Phases 0-2 are non-negotiable core. Phase 3-4 can be simplified. Phase 5 content can be reduced to 5 challenges |
 | Monaco bundle size | Dynamic import, code-split editor page |
+
+---
+
+## Phase Dependencies
+
+```
+Phase 0 (Foundation + Design)
+  └─→ Phase 1 (Core Loop)
+        └─→ Phase 2 (AI Scoring)
+              └─→ Phase 3 (Social + Leaderboard)
+                    └─→ Phase 4 (Shareability)
+                          └─→ Phase 5 (Content + Polish)
+```
+
+Each phase builds on the previous. No phase can be skipped, but later phases can be simplified if needed.
 
 ---
 
