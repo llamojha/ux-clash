@@ -53,7 +53,8 @@ Clean, minimal, dark-mode-first. Inspired by Linear/Vercel aesthetic. High contr
 
 ### Typography
 - UI: Geist Sans (ships with Next.js 16)
-- Code/editor: JetBrains Mono (loaded via next/font/google)
+- Code/editor UI: Geist Mono (ships with Next.js 16, consistent family)
+- Monaco Editor: uses its own built-in font independently
 
 ### Color Strategy
 - CSS variables in `:root` (dark default)
