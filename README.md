@@ -18,4 +18,9 @@ Deploys to CubePath (hackathon requirement).
 
 ## Docs
 
-- [Product Canvases](docs/ux_clash_canvases.md) — PRD, design, mission, decisions, context
+- [PRD](docs/prd.md) — Product requirements
+- [Design](docs/design.md) — UX principles, screens, visual style
+- [Mission](docs/mission.md) — Mission, vision, brand
+- [Decisions](docs/decisions.md) — Product assumptions and decision log
+- [Context](docs/context.md) — Current state, risks, metrics
+- [All Canvases](docs/ux_clash_canvases.md) — Combined source document
