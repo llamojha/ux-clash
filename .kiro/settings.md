@@ -1,1 +1,0 @@
-# Kiro Project Settings
