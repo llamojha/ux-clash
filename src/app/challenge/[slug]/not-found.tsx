@@ -4,7 +4,7 @@ import { PageShell } from "@/components/page-shell"
 export default function ChallengeNotFound() {
   return (
     <PageShell className="text-center">
-      <h1 className="text-2xl font-bold">Challenge not found</h1>
+      <h1 className="text-2xl font-bold">Reto no encontrado</h1>
       <p className="text-muted-foreground mt-2">
         Este reto no existe o ya no está activo.
       </p>

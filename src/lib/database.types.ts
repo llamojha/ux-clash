@@ -10,7 +10,7 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      challenges: {
+      uxclash_challenges: {
         Row: {
           id: string
           title: string
@@ -55,7 +55,7 @@ export interface Database {
         }
         Relationships: []
       }
-      submissions: {
+      uxclash_submissions: {
         Row: {
           id: string
           user_id: string
@@ -91,7 +91,7 @@ export interface Database {
         }
         Relationships: []
       }
-      likes: {
+      uxclash_likes: {
         Row: {
           id: string
           user_id: string
@@ -112,7 +112,7 @@ export interface Database {
         }
         Relationships: []
       }
-      ai_scores: {
+      uxclash_ai_scores: {
         Row: {
           id: string
           submission_id: string

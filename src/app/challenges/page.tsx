@@ -3,14 +3,14 @@ import { ChallengeCard } from "@/components/challenge-card"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/database.types"
 
-type Challenge = Database["public"]["Tables"]["challenges"]["Row"]
+type Challenge = Database["public"]["Tables"]["uxclash_challenges"]["Row"]
 
 export const dynamic = "force-dynamic"
 
 export default async function ChallengesPage() {
   const supabase = await createClient()
   const { data } = await supabase
-    .from("challenges")
+    .from("uxclash_challenges")
     .select("*")
     .eq("active", true)
     .order("created_at", { ascending: false })
@@ -21,7 +21,7 @@ export default async function ChallengesPage() {
     <PageShell>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Challenges</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Retos</h1>
           <p className="text-muted-foreground mt-1 text-sm">
             Elige un reto y demuestra tu criterio de UX/UI.
           </p>

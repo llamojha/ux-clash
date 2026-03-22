@@ -5,7 +5,7 @@ import { PageShell } from "@/components/page-shell"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/database.types"
 
-type Challenge = Database["public"]["Tables"]["challenges"]["Row"]
+type Challenge = Database["public"]["Tables"]["uxclash_challenges"]["Row"]
 
 export const dynamic = "force-dynamic"
 
@@ -17,7 +17,7 @@ export default async function ChallengePage({
   const { slug } = await params
   const supabase = await createClient()
   const { data } = await supabase
-    .from("challenges")
+    .from("uxclash_challenges")
     .select("*")
     .eq("slug", slug)
     .single()

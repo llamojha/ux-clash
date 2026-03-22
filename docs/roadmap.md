@@ -10,16 +10,16 @@
 
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
-| Framework | Next.js 15 (App Router) | SSR for public pages (SEO, share cards), API routes for backend, single deployable |
-| UI | React + shadcn/ui + Tailwind | Dark arena aesthetic, accessible components, fast to build |
+| Runtime | Bun | 25x faster installs, native TS, compatible with full stack |
+| Framework | Next.js 16 (App Router) | SSR for public pages, API routes, single deployable, React 19 |
+| UI | React 19 + shadcn/ui + Tailwind v4 | Modern Editorial aesthetic, accessible components, fast to build |
 | Editor | Monaco Editor | VS Code engine, syntax highlighting, multi-tab (HTML + CSS) |
-| DB | PostgreSQL | Robust, self-hosted on CubePath VPS via Docker |
-| ORM | Drizzle | Lightweight, type-safe, great DX with PostgreSQL |
-| Auth | NextAuth.js (Auth.js v5) | GitHub OAuth — fits target audience (devs/designers) |
+| Auth + DB | Supabase Cloud | GitHub OAuth, PostgreSQL, free tier, no self-hosted DB needed |
+| Data layer | Supabase JS client (no ORM) | Simple CRUD, generated TypeScript types, minimal dependencies |
 | AI Scoring | OpenRouter (Claude/GPT) | Flexible model choice, single API, structured rubric output |
 | Preview | Sandboxed iframe | srcdoc with Tailwind CDN play, CSP to block JS/external |
 | Screenshot | html2canvas or Puppeteer | For share card generation |
-| Deploy | CubePath VPS + Coolify | Docker Compose, auto-deploy from GitHub |
+| Deploy | CubePath VPS + Dokploy (Railpack) | Git-based auto-deploy from GitHub |
 
 **Why Next.js over Vite+React:** Public entry pages need SSR for social share cards (OG tags). The hackathon judges will click links — those pages must render with proper meta. API routes eliminate the need for a separate backend server. Single Docker image to deploy.
 
@@ -27,31 +27,32 @@
 
 ---
 
-## Phase 0 — Foundation + Design System
+## Phase 0 — Foundation + Design System ✅
 
-**Goal:** Deployable skeleton on CubePath with DB, auth, design system, and basic pages.
+**Goal:** Deployable skeleton with DB, auth, design system, and basic pages.
 
 ### Infra & Setup
-- [ ] Next.js 15 project with App Router, TypeScript, Tailwind, shadcn/ui
-- [ ] PostgreSQL schema with Drizzle (users, challenges, submissions, likes, ai_scores)
-- [ ] NextAuth.js with GitHub OAuth
-- [ ] Docker Compose (Next.js + PostgreSQL)
-- [ ] Deploy to CubePath via Coolify
-- [ ] Seed 3 challenges for development
+- [x] Next.js 16 project with App Router, TypeScript, Tailwind v4, shadcn/ui, Bun
+- [x] Supabase Cloud (PostgreSQL + Auth) — schema for challenges, submissions, likes, ai_scores
+- [x] GitHub OAuth via Supabase Auth
+- [x] Docker Compose + Dockerfile (oven/bun base, standalone output)
+- [x] Seed 3 challenges for development
 
 ### Design System
-- [ ] Dark arena theme: color palette (CSS variables), shadows, borders
-- [ ] Typography scale: headings, body, mono (for code/editor)
-- [ ] shadcn/ui theme customization to match arena aesthetic
-- [ ] Core layout components: page shell, section container, card, badge, score display
-- [ ] Responsive structure (desktop-first, browsable on mobile)
+- [x] Modern Editorial theme: oklch color palette (CSS variables), dark-mode first
+- [x] Typography: Geist Sans (UI) + Geist Mono (code)
+- [x] shadcn/ui theme customization with custom palette
+- [x] Core layout components: PageShell, SiteHeader, SiteFooter, ChallengeCard, ScoreBadge
+- [x] Responsive structure (desktop-first, browsable on mobile)
 
-### Pages (skeleton with real layout, placeholder content)
-- [ ] Home page: hero, featured challenge card, top entries area, leaderboard preview
-- [ ] Challenge page: brief layout (title, scenario, objective, viewport, constraints, CTA)
-- [ ] Basic nav: logo, challenge links, auth button
+### Pages
+- [x] Home page: hero, featured challenge card, top entries placeholder, leaderboard placeholder
+- [x] Challenge page: full brief (title, scenario, objective, viewport, constraints, CTA)
+- [x] Challenges list page: grid of active challenges
+- [x] Basic nav: logo, challenge links, auth button/user menu
+- [x] Theme preview page (/dev/theme)
 
-**Deliverable:** App running on CubePath with login, DB, and a visually intentional dark arena UI that sets the tone for everything built on top.
+**Deliverable:** App running locally with login, DB schema, and Modern Editorial design system. Deploy-ready via Dokploy/Railpack on CubePath.
 
 ---
 

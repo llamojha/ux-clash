@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Database } from "@/lib/database.types"
 
-type Challenge = Database["public"]["Tables"]["challenges"]["Row"]
+type Challenge = Database["public"]["Tables"]["uxclash_challenges"]["Row"]
 
 export function ChallengeCard({ challenge }: { challenge: Challenge }) {
   return (

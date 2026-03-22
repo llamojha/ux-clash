@@ -14,7 +14,7 @@ export function LoginButton() {
 
   return (
     <Button variant="outline" size="sm" onClick={handleLogin}>
-      Sign in with GitHub
+      Entrar con GitHub
     </Button>
   )
 }

@@ -4,14 +4,14 @@ import { ChallengeCard } from "@/components/challenge-card"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/database.types"
 
-type Challenge = Database["public"]["Tables"]["challenges"]["Row"]
+type Challenge = Database["public"]["Tables"]["uxclash_challenges"]["Row"]
 
 export const dynamic = "force-dynamic"
 
 export default async function HomePage() {
   const supabase = await createClient()
   const { data } = await supabase
-    .from("challenges")
+    .from("uxclash_challenges")
     .select("*")
     .eq("active", true)
     .order("created_at", { ascending: false })

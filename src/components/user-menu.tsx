@@ -31,7 +31,7 @@ export function UserMenu() {
 
   const avatar = user.user_metadata?.avatar_url
   const name =
-    user.user_metadata?.user_name || user.user_metadata?.name || "User"
+    user.user_metadata?.user_name || user.user_metadata?.name || "Usuario"
 
   const handleSignOut = () => {
     const supabase = createClient()
@@ -45,7 +45,7 @@ export function UserMenu() {
       )}
       <span className="text-sm">{name}</span>
       <Button variant="ghost" size="sm" onClick={handleSignOut}>
-        Sign out
+        Cerrar sesión
       </Button>
     </div>
   )
