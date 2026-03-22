@@ -70,7 +70,7 @@ export function PreviewPanel({
           <Monitor className="size-3.5" />
         </button>
       </div>
-      <div className="flex-1 overflow-auto bg-white p-2">
+      <div className="flex-1 overflow-auto bg-neutral-800 p-2">
         <iframe
           srcDoc={debouncedDoc}
           sandbox="allow-scripts"

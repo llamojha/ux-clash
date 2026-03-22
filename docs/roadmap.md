@@ -56,73 +56,63 @@
 
 ---
 
-## Phase 1 — Core Loop
+## Phase 1 — Core Loop ✅
 
 **Goal:** A user can see a challenge, open the editor, write code, preview it, and submit.
 
-- [ ] Challenge list page (home) — daily/weekly cards, active challenge highlighted
-- [ ] Challenge detail page — real data from DB, styled with design system
-- [ ] Editor Arena page:
-  - [ ] Monaco editor with HTML tab + CSS tab
-  - [ ] Live preview panel (sandboxed iframe with Tailwind CDN)
-  - [ ] Challenge brief visible above editor
-  - [ ] Viewport toggle (mobile/desktop) in preview
-  - [ ] Template pre-loaded for challenges that have one
-- [ ] Submit flow — save HTML + CSS to DB, require auth
-- [ ] Submission sandbox security: CSP headers, strip `<script>`, block external resources
+- [x] Challenge list page (home) — daily/weekly cards, active challenge highlighted
+- [x] Challenge detail page — real data from DB, styled with design system
+- [x] Editor Arena page:
+  - [x] Monaco editor with HTML tab + CSS tab
+  - [x] Live preview panel (sandboxed iframe with Tailwind CDN)
+  - [x] Challenge brief visible above editor
+  - [x] Viewport toggle (mobile/desktop) in preview
+  - [x] Template pre-loaded for challenges that have one
+- [x] Submit flow — save HTML + CSS to DB, require auth
+- [x] Submission sandbox security: CSP headers, strip `<script>`, block external resources
+- [x] DOMPurify sanitization (isomorphic-dompurify), CSS sanitization
+- [x] Race-safe duplicate check via unique index
+- [x] `uxclash_` table prefix on all tables
+- [x] Full es_ES localization (UI + DB seed data)
+- [x] Logo SVG, dynamic OG image, social metadata
 
 **Deliverable:** Full editor-to-submit flow working. This is the heart of the product.
 
 ---
 
-## Phase 2 — AI Scoring
+## Phase 2 — Social + Leaderboard
 
-**Goal:** Every submission gets an AI score with rubric breakdown and feedback.
+**Goal:** Likes, leaderboard, the competitive layer, and timed challenges.
 
-- [ ] AI scoring service (server-side):
-  - [ ] Send rendered HTML+CSS to LLM via OpenRouter
-  - [ ] Structured prompt with 6-criteria rubric
-  - [ ] Parse response: total score, per-criterion scores, 2 strengths, 2 weaknesses, 1 suggestion
-  - [ ] Store in ai_scores table
-- [ ] Submission result page:
-  - [ ] Preview of the submission
-  - [ ] AI score total + breakdown radar/bar chart
-  - [ ] Strengths, weaknesses, suggestion displayed
-  - [ ] Score triggers on submit (async, show loading state)
-- [ ] Handle AI failures gracefully (retry, fallback message)
-
-**Deliverable:** Submit → get AI feedback with professional rubric breakdown.
-
----
-
-## Phase 3 — Social + Leaderboard
-
-**Goal:** Likes, leaderboard, and the competitive layer.
-
+- [ ] Challenge timing:
+  - [ ] Add `starts_at` and `ends_at` columns to `uxclash_challenges`
+  - [ ] Filter active challenges by `now() BETWEEN starts_at AND ends_at`
+  - [ ] Countdown timer component on challenge/editor pages
+  - [ ] Block submissions after `ends_at`
+  - [ ] Daily = 24h window (00:00–23:59 UTC), Weekly = Mon 00:00–Sun 23:59 UTC
 - [ ] Like system — authenticated users can like submissions (one per user per submission)
-- [ ] Social score calculation: normalized likes → 50% weight
-- [ ] Total score: 50% AI + 50% social
+- [ ] Social score calculation: normalized likes
 - [ ] Leaderboard per challenge:
-  - [ ] Ranked list of submissions by total score
-  - [ ] Show preview thumbnail, author, score breakdown
+  - [ ] Ranked list of submissions by social score
+  - [ ] Show preview thumbnail, author, score
   - [ ] Filter: daily / weekly
 - [ ] User profile page (minimal):
   - [ ] Username, avatar (from GitHub)
   - [ ] List of submissions with scores
   - [ ] Aggregate stats
 
-**Deliverable:** Full competitive loop — submit, score, rank, compare.
+**Deliverable:** Full competitive loop — submit, like, rank, compare.
 
 ---
 
-## Phase 4 — Shareability + Public Pages
+## Phase 3 — Shareability + Public Pages
 
 **Goal:** Every submission is a shareable, beautiful public page with proper OG tags.
 
 - [ ] Public entry page (`/entry/[id]`):
   - [ ] Large preview render
   - [ ] Author info, challenge name
-  - [ ] AI score + social score
+  - [ ] Social score + likes
   - [ ] Share button (copy link, Twitter/X)
   - [ ] CTA: "Try this challenge"
 - [ ] OG meta tags (SSR) — title, description, preview image
@@ -137,15 +127,14 @@
 
 ---
 
-## Phase 5 — Content + Polish
+## Phase 4 — Content + Polish
 
 **Goal:** Full challenge set, UX polish, hackathon submission readiness.
 
 - [ ] Seed all 10 challenges (mix of daily/weekly, mobile/desktop/both, with/without templates)
-- [ ] Challenge rotation logic (which challenge is active today/this week)
 - [ ] UX polish pass:
   - [ ] Loading states, transitions, empty states
-  - [ ] Error handling (auth failures, AI timeouts, network errors)
+  - [ ] Error handling (auth failures, network errors)
   - [ ] Mobile responsiveness (browsing — editor is desktop-focused)
   - [ ] Accessibility basics (keyboard nav, contrast, focus states)
 - [ ] README.md for hackathon:
@@ -160,6 +149,26 @@
 
 ---
 
+## Phase 5 — AI Scoring (stretch)
+
+**Goal:** Every submission gets an AI score with rubric breakdown and feedback.
+
+- [ ] AI scoring service (server-side):
+  - [ ] Send rendered HTML+CSS to LLM via OpenRouter
+  - [ ] Structured prompt with 6-criteria rubric
+  - [ ] Parse response: total score, per-criterion scores, 2 strengths, 2 weaknesses, 1 suggestion
+  - [ ] Store in uxclash_ai_scores table
+- [ ] Submission result page:
+  - [ ] AI score total + breakdown radar/bar chart
+  - [ ] Strengths, weaknesses, suggestion displayed
+  - [ ] Score triggers on submit (async, show loading state)
+- [ ] Total score update: 50% AI + 50% social
+- [ ] Handle AI failures gracefully (retry, fallback message)
+
+**Deliverable:** Submit → get AI feedback with professional rubric breakdown.
+
+---
+
 ## Risk Mitigations
 
 | Risk | Mitigation |
@@ -167,7 +176,7 @@
 | AI scoring inconsistent | Detailed rubric prompt with examples, structured JSON output, temperature=0 |
 | Sandbox security | CSP headers, srcdoc iframe, DOMPurify sanitization, no JS execution |
 | CubePath deploy issues | Docker Compose tested locally first, Coolify as fallback |
-| Scope pressure | Phases 0-2 are non-negotiable core. Phase 3-4 can be simplified. Phase 5 content can be reduced to 5 challenges |
+| Scope pressure | Phases 0-2 are non-negotiable core. Phase 3-4 can be simplified. Phase 5 (AI) is a stretch goal |
 | Monaco bundle size | Dynamic import, code-split editor page |
 
 ---
@@ -177,13 +186,13 @@
 ```
 Phase 0 (Foundation + Design)
   └─→ Phase 1 (Core Loop)
-        └─→ Phase 2 (AI Scoring)
-              └─→ Phase 3 (Social + Leaderboard)
-                    └─→ Phase 4 (Shareability)
-                          └─→ Phase 5 (Content + Polish)
+        └─→ Phase 2 (Social + Leaderboard)
+              └─→ Phase 3 (Shareability)
+                    └─→ Phase 4 (Content + Polish)
+                          └─→ Phase 5 (AI Scoring — stretch)
 ```
 
-Each phase builds on the previous. No phase can be skipped, but later phases can be simplified if needed.
+Each phase builds on the previous. No phase can be skipped, but Phase 5 (AI) is a stretch goal that can be dropped if time is tight.
 
 ---
 

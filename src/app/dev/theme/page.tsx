@@ -27,7 +27,7 @@ export default function ThemePage() {
     <div className="mx-auto max-w-4xl space-y-12 p-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          UX Clash — Theme Preview
+          UX Clash | Theme Preview
         </h1>
         <p className="text-muted-foreground mt-2">
           Modern Editorial design system. Dark-mode first.
@@ -55,14 +55,14 @@ export default function ThemePage() {
         <h2 className="text-xl font-semibold">Typography</h2>
         <div className="space-y-3">
           <p className="text-4xl font-bold tracking-tight">
-            Heading — Geist Sans
+            Heading | Geist Sans
           </p>
-          <p className="text-lg">Body text — clean and readable at any size.</p>
+          <p className="text-lg">Body text, clean and readable at any size.</p>
           <p className="text-muted-foreground text-sm">
             Muted text for secondary information.
           </p>
           <p className="font-mono text-sm">
-            Monospace — Geist Mono for code contexts.
+            Monospace | Geist Mono for code contexts.
           </p>
         </div>
       </section>

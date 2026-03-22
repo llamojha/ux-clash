@@ -19,7 +19,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://uxclash.com"
 
 export const metadata: Metadata = {
   title: {
-    default: "UX Clash — La arena competitiva de UX/UI en código",
+    default: "UX Clash | La arena competitiva de UX/UI en código",
     template: "%s | UX Clash",
   },
   description:
@@ -33,15 +33,24 @@ export const metadata: Metadata = {
     locale: "es_ES",
     url: siteUrl,
     siteName: "UX Clash",
-    title: "UX Clash — La arena competitiva de UX/UI en código",
+    title: "UX Clash | La arena competitiva de UX/UI en código",
     description:
       "Diseña interfaces con HTML + Tailwind para retos reales, compite en un leaderboard con scoring de IA y validación social.",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "UX Clash",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "UX Clash — La arena competitiva de UX/UI en código",
+    title: "UX Clash | La arena competitiva de UX/UI en código",
     description:
       "Diseña interfaces con HTML + Tailwind para retos reales, compite en un leaderboard con scoring de IA y validación social.",
+    images: ["/og.png"],
   },
   icons: {
     icon: "/logo.svg",
