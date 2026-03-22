@@ -18,6 +18,7 @@ Deploys to CubePath (hackathon requirement).
 
 ## Docs
 
+- [Roadmap](docs/roadmap.md) — MVP phases, stack decisions, timeline
 - [Hackathon Rules](docs/hackathon.md) — CubePath 2026 hackathon rules and deadlines
 - [PRD](docs/prd.md) — Product requirements
 - [Design](docs/design.md) — UX principles, screens, visual style
