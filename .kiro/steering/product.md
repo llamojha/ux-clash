@@ -108,6 +108,13 @@ Ser la plataforma de referencia para practicar, medir y exhibir criterio de dise
 - Competición visible
 - Resultado compartible
 
+## Hackathon Context
+- **Event:** Hackatón CubePath 2026 — https://github.com/midudev/hackaton-cubepath-2026
+- **Deadline:** 31 March 2026, 23:59:59 CET
+- **Evaluation criteria (by importance):** UX > Creativity > Utility > Technical implementation
+- **Requirements:** Deploy on CubePath, public repo, README with demo link + screenshots/GIFs + CubePath explanation, register via issue
+- **Full rules:** see `docs/hackathon.md`
+
 ## Visual Style
 - Oscuro, limpio, técnico
 - Estética de arena/scoreboard
