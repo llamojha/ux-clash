@@ -2,6 +2,8 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { PageShell } from "@/components/page-shell"
+import { CountdownTimer } from "@/components/countdown-timer"
+import { ChallengeSubmissions } from "@/components/challenge-submissions"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/database.types"
 
@@ -25,12 +27,21 @@ export default async function ChallengePage({
   const challenge = data as Challenge | null
   if (!challenge) notFound()
 
+  const ended = challenge.ends_at
+    ? new Date(challenge.ends_at).getTime() < Date.now()
+    : false
+
   return (
     <PageShell className="max-w-3xl">
       <div className="space-y-6">
         <div className="flex items-center gap-2">
-          <Badge variant="outline">{challenge.type}</Badge>
-          <Badge variant="secondary">{challenge.viewport}</Badge>
+          <Badge variant="outline">
+            {challenge.type === "daily" ? "Diario" : "Semanal"}
+          </Badge>
+          <Badge variant="secondary">
+            {challenge.viewport === "mobile" ? "Móvil" : challenge.viewport === "desktop" ? "Escritorio" : "Ambos"}
+          </Badge>
+          {challenge.ends_at && <CountdownTimer endsAt={challenge.ends_at} />}
         </div>
 
         <h1 className="text-3xl font-bold tracking-tight">
@@ -62,12 +73,22 @@ export default async function ChallengePage({
           )}
         </div>
 
-        <Link
-          href={`/editor/${challenge.slug}`}
-          className="bg-primary text-primary-foreground hover:bg-primary/80 inline-flex h-9 items-center justify-center rounded-lg px-4 text-sm font-medium transition-all"
-        >
-          Abrir editor
-        </Link>
+        {ended ? (
+          <Badge variant="destructive">Reto finalizado</Badge>
+        ) : (
+          <Link
+            href={`/editor/${challenge.slug}`}
+            className="bg-primary text-primary-foreground hover:bg-primary/80 inline-flex h-9 items-center justify-center rounded-lg px-4 text-sm font-medium transition-all"
+          >
+            Abrir editor
+          </Link>
+        )}
+      </div>
+
+      {/* Per-challenge leaderboard */}
+      <div className="mt-12">
+        <h2 className="mb-4 text-lg font-semibold">Participaciones</h2>
+        <ChallengeSubmissions challengeId={challenge.id} />
       </div>
     </PageShell>
   )

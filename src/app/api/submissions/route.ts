@@ -44,6 +44,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid challenge_id" }, { status: 400 })
   }
 
+  // Check if challenge has ended
+  const { data: challenge } = await supabase
+    .from("uxclash_challenges")
+    .select("ends_at")
+    .eq("id", challenge_id)
+    .single()
+
+  if (challenge?.ends_at && new Date(challenge.ends_at) < new Date()) {
+    return NextResponse.json({ error: "Challenge ended" }, { status: 403 })
+  }
+
+  const username =
+    user.user_metadata?.user_name || user.user_metadata?.name || null
+  const avatar_url = user.user_metadata?.avatar_url || null
+
   const { data, error } = await supabase
     .from("uxclash_submissions")
     .insert({
@@ -51,6 +66,8 @@ export async function POST(request: Request) {
       challenge_id,
       html: sanitizeHtml(html),
       css: sanitizeCss(css),
+      username,
+      avatar_url,
     })
     .select("id")
     .single()

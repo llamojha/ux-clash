@@ -149,6 +149,20 @@
 
 ---
 
+## Future: Cron-based Challenge Rotation
+
+**Current state:** Challenges are pre-scheduled with `starts_at`/`ends_at` dates set manually in the DB. The initial 10 challenges cover Mar 23 – Jun 21, 2026 (3 months).
+
+**Future improvement:** Replace manual scheduling with a cron-based rotation system:
+- A scheduled function (Supabase cron / Edge Function) runs daily at 00:00 UTC
+- Deactivates expired challenges, activates the next one in queue
+- Supports a `schedule` table or `sort_order` column for rotation order
+- Enables infinite rotation without manual DB updates
+
+**Priority:** Post-MVP. Only needed when the initial 10 challenges expire.
+
+---
+
 ## Phase 5 — AI Scoring (stretch)
 
 **Goal:** Every submission gets an AI score with rubric breakdown and feedback.

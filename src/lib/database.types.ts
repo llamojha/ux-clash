@@ -23,6 +23,8 @@ export interface Database {
           template_html: string | null
           template_css: string | null
           active: boolean
+          starts_at: string | null
+          ends_at: string | null
           created_at: string
         }
         Insert: {
@@ -37,6 +39,8 @@ export interface Database {
           template_html?: string | null
           template_css?: string | null
           active?: boolean
+          starts_at?: string | null
+          ends_at?: string | null
           created_at?: string
         }
         Update: {
@@ -51,6 +55,8 @@ export interface Database {
           template_html?: string | null
           template_css?: string | null
           active?: boolean
+          starts_at?: string | null
+          ends_at?: string | null
           created_at?: string
         }
         Relationships: []
@@ -65,6 +71,8 @@ export interface Database {
           ai_score: number | null
           social_score: number | null
           total_score: number | null
+          username: string | null
+          avatar_url: string | null
           created_at: string
         }
         Insert: {
@@ -76,6 +84,8 @@ export interface Database {
           ai_score?: number | null
           social_score?: number | null
           total_score?: number | null
+          username?: string | null
+          avatar_url?: string | null
           created_at?: string
         }
         Update: {
@@ -87,6 +97,8 @@ export interface Database {
           ai_score?: number | null
           social_score?: number | null
           total_score?: number | null
+          username?: string | null
+          avatar_url?: string | null
           created_at?: string
         }
         Relationships: []

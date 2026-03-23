@@ -38,5 +38,11 @@ inclusion: always
 - Server Components by default, Client Components only when needed
 - API routes for mutations, Server Actions where appropriate
 
+## Localization
+- All user-facing UI text in Spanish (es_ES): labels, buttons, headings, toasts, empty states, error messages shown to users
+- Product terms kept in English when common in Spanish gaming/tech contexts: "Leaderboard", "Top Entries", "entry/entries"
+- API error messages (JSON) stay in English — machine-consumed, not user-facing
+- DB seed data in Spanish
+
 ## Testing Strategy
 TODO — Will be defined as implementation progresses.

@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useCallback, useRef, useEffect } from "react"
+import { ChevronDown, ChevronUp } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CodeEditor } from "@/components/code-editor"
 import { PreviewPanel } from "@/components/preview-panel"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
+import { CountdownTimer, isChallengeEnded } from "@/components/countdown-timer"
 import type { Database } from "@/lib/database.types"
 
 type Challenge = Database["public"]["Tables"]["uxclash_challenges"]["Row"]
@@ -18,6 +20,8 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
   })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [briefOpen, setBriefOpen] = useState(false)
+  const ended = isChallengeEnded(challenge.ends_at)
   const codeRef = useRef(code)
 
   const handleChange = useCallback((c: { html: string; css: string }) => {
@@ -26,6 +30,8 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
   }, [])
 
   const handleSubmit = useCallback(async () => {
+    if (ended) return
+
     const supabase = createClient()
     const {
       data: { user },
@@ -56,12 +62,18 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
       })
 
       if (res.status === 401) {
+        const supabase = createClient()
         supabase.auth.signInWithOAuth({
           provider: "github",
           options: {
             redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(window.location.pathname)}`,
           },
         })
+        return
+      }
+
+      if (res.status === 403) {
+        toast.error("Este reto ya ha finalizado")
         return
       }
 
@@ -88,38 +100,91 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
     } finally {
       setSubmitting(false)
     }
-  }, [challenge.id])
+  }, [challenge.id, ended])
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
         e.preventDefault()
-        if (!submitted && !submitting) handleSubmit()
+        if (!submitted && !submitting && !ended) handleSubmit()
       }
     }
     window.addEventListener("keydown", handler)
     return () => window.removeEventListener("keydown", handler)
-  }, [handleSubmit, submitted, submitting])
+  }, [handleSubmit, submitted, submitting, ended])
+
+  const buttonLabel = ended
+    ? "Reto finalizado"
+    : submitted
+      ? "Enviado"
+      : submitting
+        ? "Enviando…"
+        : "Enviar"
+
+  const Chevron = briefOpen ? ChevronUp : ChevronDown
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)] flex-col">
       {/* Brief bar */}
-      <div className="border-border/50 flex items-center gap-3 border-b px-4 py-2">
-        <h1 className="truncate text-sm font-semibold">{challenge.title}</h1>
-        <Badge variant="outline" className="shrink-0 text-xs">
-          {challenge.viewport}
-        </Badge>
-        <p className="text-muted-foreground hidden truncate text-xs sm:block">
-          {challenge.objective}
-        </p>
-        <Button
-          size="sm"
-          className="ml-auto shrink-0"
-          onClick={handleSubmit}
-          disabled={submitting || submitted}
-        >
-          {submitted ? "Enviado" : submitting ? "Enviando…" : "Enviar"}
-        </Button>
+      <div className="border-border/50 border-b">
+        <div className="flex items-center gap-3 px-4 py-2">
+          <button
+            onClick={() => setBriefOpen(!briefOpen)}
+            className="text-muted-foreground hover:text-foreground flex shrink-0 items-center gap-1.5 transition-colors"
+            aria-expanded={briefOpen}
+            aria-label="Ver detalles del reto"
+          >
+            <Chevron className="size-4" />
+            <h1 className="text-foreground text-sm font-semibold">
+              {challenge.title}
+            </h1>
+          </button>
+          <Badge variant="outline" className="shrink-0 text-xs">
+            {challenge.viewport === "mobile" ? "Móvil" : challenge.viewport === "desktop" ? "Escritorio" : "Ambos"}
+          </Badge>
+          <Badge variant="secondary" className="shrink-0 text-xs">
+            {challenge.type === "daily" ? "Diario" : "Semanal"}
+          </Badge>
+          {challenge.ends_at && (
+            <CountdownTimer endsAt={challenge.ends_at} />
+          )}
+          <Button
+            size="sm"
+            className="ml-auto shrink-0"
+            onClick={handleSubmit}
+            disabled={submitting || submitted || ended}
+          >
+            {buttonLabel}
+          </Button>
+        </div>
+
+        {/* Expanded brief */}
+        {briefOpen && (
+          <div className="border-border/50 bg-muted/30 grid gap-4 border-t px-4 py-3 sm:grid-cols-3">
+            <div>
+              <h2 className="text-muted-foreground mb-1 text-xs font-semibold uppercase tracking-wide">
+                Escenario
+              </h2>
+              <p className="text-sm leading-relaxed">{challenge.scenario}</p>
+            </div>
+            <div>
+              <h2 className="text-muted-foreground mb-1 text-xs font-semibold uppercase tracking-wide">
+                Objetivo
+              </h2>
+              <p className="text-sm leading-relaxed">{challenge.objective}</p>
+            </div>
+            {challenge.constraints && (
+              <div>
+                <h2 className="text-muted-foreground mb-1 text-xs font-semibold uppercase tracking-wide">
+                  Restricciones
+                </h2>
+                <p className="text-sm leading-relaxed">
+                  {challenge.constraints}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Editor + Preview */}

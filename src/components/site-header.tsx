@@ -18,6 +18,12 @@ export function SiteHeader() {
             >
               Retos
             </Link>
+            <Link
+              href="/leaderboard"
+              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+            >
+              Leaderboard
+            </Link>
           </nav>
         </div>
         <UserMenu />

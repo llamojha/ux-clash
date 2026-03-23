@@ -1,24 +1,69 @@
 import Link from "next/link"
 import { PageShell } from "@/components/page-shell"
 import { ChallengeCard } from "@/components/challenge-card"
+import { LikeButton } from "@/components/like-button"
+import { Zap, Calendar, Trophy, Globe } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/database.types"
 
 type Challenge = Database["public"]["Tables"]["uxclash_challenges"]["Row"]
+type Submission = Database["public"]["Tables"]["uxclash_submissions"]["Row"]
 
 export const dynamic = "force-dynamic"
 
+async function getColumnData(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  challenge: Challenge | null,
+  userId: string | null,
+) {
+  if (!challenge) return { entries: [] as Submission[], likedIds: new Set<string>() }
+
+  const { data: subs } = await supabase
+    .from("uxclash_submissions")
+    .select("*")
+    .eq("challenge_id", challenge.id)
+    .order("social_score", { ascending: false, nullsFirst: false })
+    .limit(5)
+
+  const entries = (subs ?? []) as Submission[]
+
+  let likedIds = new Set<string>()
+  if (userId && entries.length > 0) {
+    const { data: likes } = await supabase
+      .from("uxclash_likes")
+      .select("submission_id")
+      .eq("user_id", userId)
+      .in("submission_id", entries.map((s) => s.id))
+    likedIds = new Set((likes ?? []).map((l) => l.submission_id))
+  }
+
+  return { entries, likedIds }
+}
+
 export default async function HomePage() {
   const supabase = await createClient()
-  const { data } = await supabase
+  const now = new Date().toISOString()
+
+  const { data: challengeData } = await supabase
     .from("uxclash_challenges")
     .select("*")
     .eq("active", true)
+    .or(`starts_at.is.null,and(starts_at.lte.${now},ends_at.gte.${now})`)
     .order("created_at", { ascending: false })
-    .limit(3)
 
-  const challenges = (data ?? []) as Challenge[]
-  const featured = challenges[0]
+  const challenges = (challengeData ?? []) as Challenge[]
+  const daily = challenges.find((c) => c.type === "daily") ?? null
+  const weekly = challenges.find((c) => c.type === "weekly") ?? null
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const userId = user?.id ?? null
+
+  const [dailyData, weeklyData] = await Promise.all([
+    getColumnData(supabase, daily, userId),
+    getColumnData(supabase, weekly, userId),
+  ])
 
   return (
     <PageShell>
@@ -43,32 +88,188 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Featured challenge */}
-      {featured && (
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Reto destacado</h2>
-          <ChallengeCard challenge={featured} />
-        </section>
-      )}
+      {/* Two-column: Daily + Weekly */}
+      <section className="grid gap-x-8 gap-y-4 md:grid-cols-2">
+        {/* Row 1: Challenge labels */}
+        <h2 className="flex items-center gap-2 text-lg font-semibold">
+          <Zap className="text-accent size-5" />
+          Reto diario
+        </h2>
+        <h2 className="flex items-center gap-2 text-lg font-semibold">
+          <Calendar className="text-accent size-5" />
+          Reto semanal
+        </h2>
 
-      {/* Placeholder sections */}
-      <section className="mt-12 space-y-4">
-        <h2 className="text-lg font-semibold">Top Entries</h2>
-        <div className="border-border rounded-lg border border-dashed p-12 text-center">
-          <p className="text-muted-foreground text-sm">
-            Las mejores submissions aparecerán aquí.
-          </p>
-        </div>
-      </section>
+        {/* Row 2: Challenge cards (equal height) */}
+        {daily ? (
+          <ChallengeCard challenge={daily} />
+        ) : (
+          <div className="border-border rounded-lg border border-dashed p-8 text-center">
+            <p className="text-muted-foreground text-sm">No hay reto activo.</p>
+          </div>
+        )}
+        {weekly ? (
+          <ChallengeCard challenge={weekly} />
+        ) : (
+          <div className="border-border rounded-lg border border-dashed p-8 text-center">
+            <p className="text-muted-foreground text-sm">No hay reto activo.</p>
+          </div>
+        )}
 
-      <section className="mt-12 space-y-4">
-        <h2 className="text-lg font-semibold">Leaderboard</h2>
-        <div className="border-border rounded-lg border border-dashed p-12 text-center">
-          <p className="text-muted-foreground text-sm">
-            El ranking se mostrará aquí.
-          </p>
+        {/* Row 3: Ranking labels */}
+        <h2 className="mt-4 flex items-center gap-2 text-lg font-semibold">
+          <Trophy className="text-accent size-5" />
+          Ranking diario
+        </h2>
+        <h2 className="mt-4 flex items-center gap-2 text-lg font-semibold">
+          <Trophy className="text-accent size-5" />
+          Ranking semanal
+        </h2>
+
+        {/* Row 4: Ranking cards (equal height) */}
+        <RankingCard
+          entries={dailyData.entries}
+          likedIds={dailyData.likedIds}
+          hasChallenge={!!daily}
+        />
+        <RankingCard
+          entries={weeklyData.entries}
+          likedIds={weeklyData.likedIds}
+          hasChallenge={!!weekly}
+        />
+
+        {/* Row 5: Global label */}
+        <h2 className="mt-4 text-lg font-semibold md:col-span-2">
+          <span className="flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <Globe className="text-accent size-5" />
+              Ranking global
+            </span>
+            <Link
+              href="/leaderboard"
+              className="text-accent text-sm font-normal hover:underline"
+            >
+              Ver todo →
+            </Link>
+          </span>
+        </h2>
+
+        {/* Row 6: Global ranking card */}
+        <div className="md:col-span-2">
+          <GlobalLeaderboard supabase={supabase} />
         </div>
       </section>
     </PageShell>
+  )
+}
+
+function RankingCard({
+  entries,
+  likedIds,
+  hasChallenge,
+}: {
+  entries: Submission[]
+  likedIds: Set<string>
+  hasChallenge: boolean
+}) {
+  if (entries.length === 0) {
+    return (
+      <div className="border-border rounded-lg border border-dashed p-12 text-center">
+        <p className="text-muted-foreground text-sm">
+          {hasChallenge ? "Aún no hay entries. ¡Sé el primero!" : "No hay reto activo."}
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      {entries.map((submission, i) => (
+        <div
+          key={submission.id}
+          className="border-border flex items-center gap-4 rounded-lg border p-3"
+        >
+          <span className="text-muted-foreground w-6 text-center font-mono text-sm font-bold">
+            {i + 1}
+          </span>
+          {submission.avatar_url && (
+            <img src={submission.avatar_url} alt="" className="size-6 rounded-full" />
+          )}
+          <span className="flex-1 truncate text-sm font-medium">
+            {submission.username ?? "Anónimo"}
+          </span>
+          <LikeButton
+            submissionId={submission.id}
+            initialCount={submission.social_score ?? 0}
+            initialLiked={likedIds.has(submission.id)}
+          />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+async function GlobalLeaderboard({
+  supabase,
+}: {
+  supabase: Awaited<ReturnType<typeof createClient>>
+}) {
+  const { data } = await supabase
+    .from("uxclash_submissions")
+    .select("user_id, username, avatar_url, social_score")
+
+  const userMap = new Map<
+    string,
+    { username: string | null; avatar_url: string | null; total: number }
+  >()
+  for (const row of data ?? []) {
+    const existing = userMap.get(row.user_id)
+    const score = row.social_score ?? 0
+    if (existing) {
+      existing.total += score
+    } else {
+      userMap.set(row.user_id, {
+        username: row.username,
+        avatar_url: row.avatar_url,
+        total: score,
+      })
+    }
+  }
+  const topUsers = [...userMap.values()]
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 5)
+
+  if (topUsers.length === 0) {
+    return (
+      <div className="border-border rounded-lg border border-dashed p-12 text-center">
+        <p className="text-muted-foreground text-sm">
+          El ranking se mostrará aquí.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      {topUsers.map((u, i) => (
+        <div
+          key={i}
+          className="border-border flex items-center gap-4 rounded-lg border p-3"
+        >
+          <span className="text-muted-foreground w-6 text-center font-mono text-sm font-bold">
+            {i + 1}
+          </span>
+          {u.avatar_url && (
+            <img src={u.avatar_url} alt="" className="size-6 rounded-full" />
+          )}
+          <span className="flex-1 truncate text-sm font-medium">
+            {u.username ?? "Anónimo"}
+          </span>
+          <span className="text-accent font-mono text-sm font-semibold">
+            {u.total}
+          </span>
+        </div>
+      ))}
+    </div>
   )
 }

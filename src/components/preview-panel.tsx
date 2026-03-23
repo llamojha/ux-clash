@@ -74,7 +74,7 @@ export function PreviewPanel({
         <iframe
           srcDoc={debouncedDoc}
           sandbox="allow-scripts"
-          className="mx-auto block h-full border-0"
+          className="mx-auto block h-full border-0 bg-white"
           style={{ width: VIEWPORT_WIDTH[viewport] }}
           title="Vista previa"
         />
