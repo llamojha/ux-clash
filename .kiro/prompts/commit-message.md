@@ -14,4 +14,5 @@ Generate a commit message for staged changes.
 **Output:**
 - One-line summary (max 72 chars)
 - Optional body with details if changes are complex
+- No quotes or backticks in the message (no ", ', or `)
 - Ready to copy/paste

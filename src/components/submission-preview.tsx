@@ -15,13 +15,19 @@ function buildSrcdoc(html: string, css: string) {
 </html>`
 }
 
-export function SubmissionPreview({ html, css }: { html: string; css: string }) {
+const IFRAME_SIZE = {
+  mobile: "h-[812px] w-[375px] scale-[0.25]",
+  desktop: "h-[800px] w-[1280px] scale-[0.2]",
+}
+
+export function SubmissionPreview({ html, css, viewport = "desktop" }: { html: string; css: string; viewport?: string }) {
+  const size = viewport === "mobile" ? IFRAME_SIZE.mobile : IFRAME_SIZE.desktop
   return (
     <div className="bg-muted relative h-32 w-full overflow-hidden rounded-md">
       <iframe
         srcDoc={buildSrcdoc(html, css)}
-        sandbox=""
-        className="pointer-events-none h-[640px] w-[480px] origin-top-left scale-[0.25]"
+        sandbox="allow-scripts"
+        className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ${size}`}
         title="Vista previa"
         loading="lazy"
       />

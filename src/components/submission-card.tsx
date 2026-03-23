@@ -8,10 +8,12 @@ export function SubmissionCard({
   submission,
   rank,
   liked,
+  viewport,
 }: {
   submission: Submission
   rank: number
   liked: boolean
+  viewport?: string
 }) {
   return (
     <div className="border-border flex gap-4 rounded-lg border p-3">
@@ -19,7 +21,7 @@ export function SubmissionCard({
         {rank}
       </div>
       <div className="w-32 shrink-0">
-        <SubmissionPreview html={submission.html} css={submission.css} />
+        <SubmissionPreview html={submission.html} css={submission.css} viewport={viewport} />
       </div>
       <div className="flex min-w-0 flex-1 flex-col justify-between">
         <div className="flex items-center gap-2">

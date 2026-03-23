@@ -2,6 +2,7 @@ import Link from "next/link"
 import { PageShell } from "@/components/page-shell"
 import { ChallengeCard } from "@/components/challenge-card"
 import { LikeButton } from "@/components/like-button"
+import { SubmissionPreview } from "@/components/submission-preview"
 import { Zap, Calendar, Trophy, Globe } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/database.types"
@@ -66,7 +67,7 @@ export default async function HomePage() {
   ])
 
   return (
-    <PageShell>
+    <PageShell className="space-y-12">
       {/* Hero */}
       <section className="py-16 text-center sm:py-24">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
@@ -88,58 +89,62 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Two-column: Daily + Weekly */}
-      <section className="grid gap-x-8 gap-y-4 md:grid-cols-2">
-        {/* Row 1: Challenge labels */}
-        <h2 className="flex items-center gap-2 text-lg font-semibold">
-          <Zap className="text-accent size-5" />
-          Reto diario
-        </h2>
-        <h2 className="flex items-center gap-2 text-lg font-semibold">
-          <Calendar className="text-accent size-5" />
-          Reto semanal
-        </h2>
+      {/* Two-column on desktop, stacked on mobile */}
+      <section className="grid gap-8 md:grid-cols-2">
+        {/* Daily column */}
+        <div className="space-y-4">
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
+            <Zap className="text-accent size-5" />
+            Reto diario
+          </h2>
+          {daily ? (
+            <ChallengeCard challenge={daily} />
+          ) : (
+            <div className="border-border rounded-lg border border-dashed p-8 text-center">
+              <p className="text-muted-foreground text-sm">No hay reto activo.</p>
+            </div>
+          )}
+          <h2 className="mt-4 flex items-center gap-2 text-lg font-semibold">
+            <Trophy className="text-accent size-5" />
+            Ranking diario
+          </h2>
+          <RankingCard
+            entries={dailyData.entries}
+            likedIds={dailyData.likedIds}
+            hasChallenge={!!daily}
+            viewport={daily?.viewport}
+          />
+        </div>
 
-        {/* Row 2: Challenge cards (equal height) */}
-        {daily ? (
-          <ChallengeCard challenge={daily} />
-        ) : (
-          <div className="border-border rounded-lg border border-dashed p-8 text-center">
-            <p className="text-muted-foreground text-sm">No hay reto activo.</p>
-          </div>
-        )}
-        {weekly ? (
-          <ChallengeCard challenge={weekly} />
-        ) : (
-          <div className="border-border rounded-lg border border-dashed p-8 text-center">
-            <p className="text-muted-foreground text-sm">No hay reto activo.</p>
-          </div>
-        )}
+        {/* Weekly column */}
+        <div className="space-y-4">
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
+            <Calendar className="text-accent size-5" />
+            Reto semanal
+          </h2>
+          {weekly ? (
+            <ChallengeCard challenge={weekly} />
+          ) : (
+            <div className="border-border rounded-lg border border-dashed p-8 text-center">
+              <p className="text-muted-foreground text-sm">No hay reto activo.</p>
+            </div>
+          )}
+          <h2 className="mt-4 flex items-center gap-2 text-lg font-semibold">
+            <Trophy className="text-accent size-5" />
+            Ranking semanal
+          </h2>
+          <RankingCard
+            entries={weeklyData.entries}
+            likedIds={weeklyData.likedIds}
+            hasChallenge={!!weekly}
+            viewport={weekly?.viewport}
+          />
+        </div>
+      </section>
 
-        {/* Row 3: Ranking labels */}
-        <h2 className="mt-4 flex items-center gap-2 text-lg font-semibold">
-          <Trophy className="text-accent size-5" />
-          Ranking diario
-        </h2>
-        <h2 className="mt-4 flex items-center gap-2 text-lg font-semibold">
-          <Trophy className="text-accent size-5" />
-          Ranking semanal
-        </h2>
-
-        {/* Row 4: Ranking cards (equal height) */}
-        <RankingCard
-          entries={dailyData.entries}
-          likedIds={dailyData.likedIds}
-          hasChallenge={!!daily}
-        />
-        <RankingCard
-          entries={weeklyData.entries}
-          likedIds={weeklyData.likedIds}
-          hasChallenge={!!weekly}
-        />
-
-        {/* Row 5: Global label */}
-        <h2 className="mt-4 text-lg font-semibold md:col-span-2">
+      {/* Global ranking — full width */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold">
           <span className="flex items-center justify-between">
             <span className="flex items-center gap-2">
               <Globe className="text-accent size-5" />
@@ -154,10 +159,7 @@ export default async function HomePage() {
           </span>
         </h2>
 
-        {/* Row 6: Global ranking card */}
-        <div className="md:col-span-2">
-          <GlobalLeaderboard supabase={supabase} />
-        </div>
+        <GlobalLeaderboard supabase={supabase} />
       </section>
     </PageShell>
   )
@@ -167,10 +169,12 @@ function RankingCard({
   entries,
   likedIds,
   hasChallenge,
+  viewport,
 }: {
   entries: Submission[]
   likedIds: Set<string>
   hasChallenge: boolean
+  viewport?: string
 }) {
   if (entries.length === 0) {
     return (
@@ -183,26 +187,35 @@ function RankingCard({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {entries.map((submission, i) => (
         <div
           key={submission.id}
-          className="border-border flex items-center gap-4 rounded-lg border p-3"
+          className="border-border flex overflow-hidden rounded-lg border"
         >
-          <span className="text-muted-foreground w-6 text-center font-mono text-sm font-bold">
-            {i + 1}
-          </span>
-          {submission.avatar_url && (
-            <img src={submission.avatar_url} alt="" className="size-6 rounded-full" />
-          )}
-          <span className="flex-1 truncate text-sm font-medium">
-            {submission.username ?? "Anónimo"}
-          </span>
-          <LikeButton
-            submissionId={submission.id}
-            initialCount={submission.social_score ?? 0}
-            initialLiked={likedIds.has(submission.id)}
-          />
+          <div className="flex w-1/2 flex-col justify-center gap-1 p-3">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground font-mono text-xs font-bold">
+                #{i + 1}
+              </span>
+              {submission.avatar_url && (
+                <img src={submission.avatar_url} alt="" className="size-5 rounded-full" />
+              )}
+              <span className="truncate text-sm font-medium">
+                {submission.username ?? "Anónimo"}
+              </span>
+            </div>
+            <div>
+              <LikeButton
+                submissionId={submission.id}
+                initialCount={submission.social_score ?? 0}
+                initialLiked={likedIds.has(submission.id)}
+              />
+            </div>
+          </div>
+          <div className="w-1/2">
+            <SubmissionPreview html={submission.html} css={submission.css ?? ""} viewport={viewport} />
+          </div>
         </div>
       ))}
     </div>
