@@ -22,7 +22,7 @@ function buildSrcdoc(html: string, css: string) {
 <script src="https://unpkg.com/@tailwindcss/browser@4"><\/script>
 <style>${safeCss}</style>
 </head>
-<body>${safe}</body>
+<body style="background:#fff">${safe}</body>
 </html>`
 }
 

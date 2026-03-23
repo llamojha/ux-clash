@@ -4,6 +4,16 @@ import { useState, useCallback, useRef, useEffect } from "react"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { CodeEditor } from "@/components/code-editor"
 import { PreviewPanel } from "@/components/preview-panel"
 import { createClient } from "@/lib/supabase/client"
@@ -21,6 +31,7 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [briefOpen, setBriefOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const ended = isChallengeEnded(challenge.ends_at)
   const codeRef = useRef(code)
 
@@ -29,29 +40,8 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
     codeRef.current = c
   }, [])
 
-  const handleSubmit = useCallback(async () => {
-    if (ended) return
-
-    const supabase = createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-      supabase.auth.signInWithOAuth({
-        provider: "github",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(window.location.pathname)}`,
-        },
-      })
-      return
-    }
-
+  const doSubmit = useCallback(async () => {
     const { html, css } = codeRef.current
-    if (!html.trim() && !css.trim()) {
-      toast.error("Escribe algo antes de enviar")
-      return
-    }
 
     setSubmitting(true)
     try {
@@ -100,7 +90,34 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
     } finally {
       setSubmitting(false)
     }
-  }, [challenge.id, ended])
+  }, [challenge.id])
+
+  const handleSubmit = useCallback(async () => {
+    if (ended) return
+
+    const supabase = createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(window.location.pathname)}`,
+        },
+      })
+      return
+    }
+
+    const { html, css } = codeRef.current
+    if (!html.trim() && !css.trim()) {
+      toast.error("Escribe algo antes de enviar")
+      return
+    }
+
+    setConfirmOpen(true)
+  }, [ended])
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -202,6 +219,22 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
           defaultViewport={challenge.viewport}
         />
       </div>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Enviar tu entry?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Una vez enviada, no podrás editarla. Asegúrate de que estás
+              conforme con tu diseño antes de continuar.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={doSubmit}>Enviar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

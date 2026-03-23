@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { SubmissionPreview } from "@/components/submission-preview"
 import { LikeButton } from "@/components/like-button"
 import type { Database } from "@/lib/database.types"
@@ -16,7 +17,8 @@ export function SubmissionCard({
   viewport?: string
 }) {
   return (
-    <div className="border-border flex gap-4 rounded-lg border p-3">
+    <div className="border-border relative flex gap-4 rounded-lg border p-3 transition-colors hover:bg-muted/50">
+      <Link href={`/submission/${submission.id}`} className="absolute inset-0" aria-label={`Ver entry de ${submission.username ?? "Anónimo"}`} />
       <div className="text-muted-foreground flex w-6 shrink-0 items-start justify-center pt-1 font-mono text-sm font-bold">
         {rank}
       </div>
@@ -36,7 +38,7 @@ export function SubmissionCard({
             {submission.username ?? "Anónimo"}
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="relative z-10">
           <LikeButton
             submissionId={submission.id}
             initialCount={submission.social_score ?? 0}

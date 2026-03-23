@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import type { Metadata } from "next"
 import { Badge } from "@/components/ui/badge"
 import { PageShell } from "@/components/page-shell"
 import { CountdownTimer } from "@/components/countdown-timer"
+import { ShareButton } from "@/components/share-button"
 import { ChallengeSubmissions } from "@/components/challenge-submissions"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/database.types"
@@ -10,6 +12,30 @@ import type { Database } from "@/lib/database.types"
 type Challenge = Database["public"]["Tables"]["uxclash_challenges"]["Row"]
 
 export const dynamic = "force-dynamic"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("uxclash_challenges")
+    .select("title, scenario")
+    .eq("slug", slug)
+    .single()
+  if (!data) return {}
+
+  const title = data.title
+  const description = data.scenario?.slice(0, 160) ?? ""
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { card: "summary_large_image", title, description },
+  }
+}
 
 export default async function ChallengePage({
   params,
@@ -83,6 +109,11 @@ export default async function ChallengePage({
             Abrir editor
           </Link>
         )}
+
+        <ShareButton
+          url={`/challenge/${challenge.slug}`}
+          title={challenge.title}
+        />
       </div>
 
       {/* Per-challenge leaderboard */}

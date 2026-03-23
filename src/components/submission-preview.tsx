@@ -1,19 +1,4 @@
-import { sanitizeHtml, sanitizeCss } from "@/lib/sanitize"
-
-function buildSrcdoc(html: string, css: string) {
-  const safe = sanitizeHtml(html)
-  const safeCss = sanitizeCss(css)
-  return `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="https://unpkg.com/@tailwindcss/browser@4"><\/script>
-<style>${safeCss}</style>
-</head>
-<body>${safe}</body>
-</html>`
-}
+import { buildSrcdoc } from "@/lib/srcdoc"
 
 const IFRAME_SIZE = {
   mobile: "h-[812px] w-[375px] scale-[0.25]",
