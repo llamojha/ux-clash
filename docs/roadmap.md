@@ -131,17 +131,17 @@
 
 **Goal:** Full challenge set, UX polish, hackathon submission readiness.
 
-- [ ] Seed all 10 challenges (mix of daily/weekly, mobile/desktop/both, with/without templates)
-- [ ] UX polish pass:
-  - [ ] Loading states, transitions, empty states
-  - [ ] Error handling (auth failures, network errors)
-  - [ ] Mobile responsiveness (browsing — editor is desktop-focused)
-  - [ ] Accessibility basics (keyboard nav, contrast, focus states)
-- [ ] README.md for hackathon:
-  - [ ] Description
-  - [ ] Demo link
-  - [ ] Screenshots/GIFs
-  - [ ] How CubePath was used
+- [x] Seed all 10 challenges (mix of daily/weekly, mobile/desktop/both, with/without templates)
+- [x] UX polish pass:
+  - [x] Loading states, transitions, empty states
+  - [x] Error handling (auth failures, network errors)
+  - [x] Mobile responsiveness (browsing — editor is desktop-focused)
+  - [x] Accessibility basics (keyboard nav, contrast, focus states)
+- [x] README.md for hackathon:
+  - [x] Description
+  - [x] Demo link
+  - [x] Screenshots/GIFs
+  - [x] How CubePath was used
 - [ ] Final deploy + smoke test on CubePath
 - [ ] Register project via GitHub issue
 

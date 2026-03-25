@@ -40,10 +40,12 @@ export function UserMenu() {
 
   return (
     <div className="flex items-center gap-2">
-      {avatar && (
-        <img src={avatar} alt={name} className="size-7 rounded-full" />
-      )}
-      <span className="text-sm">{name}</span>
+      <a href="/profile" className="flex items-center gap-2 rounded hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+        {avatar && (
+          <img src={avatar} alt={name} className="size-7 rounded-full" />
+        )}
+        <span className="text-sm">{name}</span>
+      </a>
       <Button variant="ghost" size="sm" onClick={handleSignOut}>
         Cerrar sesión
       </Button>

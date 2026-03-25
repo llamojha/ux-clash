@@ -65,7 +65,7 @@ export function LikeButton({
     <button
       onClick={toggle}
       disabled={pending}
-      className="text-muted-foreground hover:text-accent flex items-center gap-1 text-sm transition-colors"
+      className="text-muted-foreground hover:text-accent flex items-center gap-1 text-sm transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       aria-label={liked ? "Quitar like" : "Dar like"}
     >
       <Heart

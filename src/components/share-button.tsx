@@ -25,7 +25,7 @@ export function ShareButton({ url, title }: { url: string; title: string }) {
   return (
     <button
       onClick={share}
-      className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm transition-colors"
+      className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       aria-label="Compartir"
     >
       <Share2 className="size-4" />

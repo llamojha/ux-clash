@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 function formatRemaining(ms: number) {
   if (ms <= 0) return ""
@@ -16,19 +16,20 @@ function formatRemaining(ms: number) {
 }
 
 export function CountdownTimer({ endsAt }: { endsAt: string }) {
-  const [mounted, setMounted] = useState(false)
-  const [remaining, setRemaining] = useState("")
+  const calc = useCallback(
+    () => formatRemaining(new Date(endsAt).getTime() - Date.now()),
+    [endsAt],
+  )
+
+  const [remaining, setRemaining] = useState<string | null>(null)
 
   useEffect(() => {
-    setMounted(true)
-    const update = () =>
-      setRemaining(formatRemaining(new Date(endsAt).getTime() - Date.now()))
-    update()
-    const id = setInterval(update, 1000)
+    setRemaining(calc())
+    const id = setInterval(() => setRemaining(calc()), 1000)
     return () => clearInterval(id)
-  }, [endsAt])
+  }, [calc])
 
-  if (!mounted) {
+  if (remaining === null) {
     return (
       <span className="text-accent font-mono text-sm font-semibold">
         ⏱ --:--:--

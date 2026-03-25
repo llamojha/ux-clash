@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { PageShell } from "@/components/page-shell"
 import { ChallengeCard } from "@/components/challenge-card"
+import { Card, CardContent } from "@/components/ui/card"
 import { LikeButton } from "@/components/like-button"
 import { SubmissionPreview } from "@/components/submission-preview"
 import { Zap, Calendar, Trophy, Globe } from "lucide-react"
@@ -82,7 +83,7 @@ export default async function HomePage() {
         <div className="mt-8">
           <Link
             href="/challenges"
-            className="bg-primary text-primary-foreground hover:bg-primary/80 inline-flex h-9 items-center justify-center rounded-lg px-4 text-sm font-medium transition-all"
+            className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-[0_0_16px_rgba(74,222,128,0.2)] inline-flex h-10 items-center justify-center rounded-xl px-6 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             Ver retos
           </Link>
@@ -254,35 +255,37 @@ async function GlobalLeaderboard({
 
   if (topUsers.length === 0) {
     return (
-      <div className="border-border rounded-lg border border-dashed p-12 text-center">
+      <Card className="border-dashed p-12 text-center">
         <p className="text-muted-foreground text-sm">
           El ranking se mostrará aquí.
         </p>
-      </div>
+      </Card>
     )
   }
 
   return (
-    <div className="space-y-2">
-      {topUsers.map((u, i) => (
-        <div
-          key={i}
-          className="border-border flex items-center gap-4 rounded-lg border p-3"
-        >
-          <span className="text-muted-foreground w-6 text-center font-mono text-sm font-bold">
-            {i + 1}
-          </span>
-          {u.avatar_url && (
-            <img src={u.avatar_url} alt="" className="size-6 rounded-full" />
-          )}
-          <span className="flex-1 truncate text-sm font-medium">
-            {u.username ?? "Anónimo"}
-          </span>
-          <span className="text-accent font-mono text-sm font-semibold">
-            {u.total}
-          </span>
-        </div>
-      ))}
-    </div>
+    <Card>
+      <CardContent className="space-y-2 pt-4">
+        {topUsers.map((u, i) => (
+          <div
+            key={i}
+            className="border-border flex items-center gap-4 rounded-lg border p-3"
+          >
+            <span className="text-muted-foreground w-6 text-center font-mono text-sm font-bold">
+              {i + 1}
+            </span>
+            {u.avatar_url && (
+              <img src={u.avatar_url} alt="" className="size-6 rounded-full" />
+            )}
+            <span className="flex-1 truncate text-sm font-medium">
+              {u.username ?? "Anónimo"}
+            </span>
+            <span className="text-accent font-mono text-sm font-semibold">
+              {u.total}
+            </span>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   )
 }

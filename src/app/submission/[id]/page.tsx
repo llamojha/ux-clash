@@ -91,7 +91,7 @@ export default async function SubmissionPage({
   const viewport = challenge?.viewport ?? "desktop"
   const iframeClass =
     viewport === "mobile"
-      ? "h-full w-[375px] mx-auto"
+      ? "h-full w-[375px] max-w-full mx-auto"
       : "h-full w-full"
 
   return (

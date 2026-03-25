@@ -41,6 +41,7 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
   }, [])
 
   const doSubmit = useCallback(async () => {
+    setConfirmOpen(false)
     const { html, css } = codeRef.current
 
     setSubmitting(true)
@@ -80,13 +81,7 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
 
       const { id } = await res.json()
       setSubmitted(true)
-      toast.success("¡Enviado!", {
-        description: "Tu entry ha sido guardada.",
-        action: {
-          label: "Ver",
-          onClick: () => (window.location.href = `/submission/${id}`),
-        },
-      })
+      window.location.href = `/submission/${id}`
     } finally {
       setSubmitting(false)
     }
@@ -141,7 +136,21 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
   const Chevron = briefOpen ? ChevronUp : ChevronDown
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col">
+    <>
+      {/* Mobile notice */}
+      <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center md:hidden">
+        <p className="text-muted-foreground text-sm">
+          El editor está optimizado para escritorio. Abre esta página en una pantalla más grande.
+        </p>
+        <a
+          href={`/challenge/${challenge.slug}`}
+          className="text-accent mt-4 text-sm hover:underline"
+        >
+          ← Volver al reto
+        </a>
+      </div>
+
+      <div className="hidden h-[calc(100vh-3.5rem)] flex-col md:flex">
       {/* Brief bar */}
       <div className="border-border/50 border-b">
         <div className="flex items-center gap-3 px-4 py-2">
@@ -223,7 +232,7 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Enviar tu entry?</AlertDialogTitle>
+            <AlertDialogTitle>¿Enviar tu solución?</AlertDialogTitle>
             <AlertDialogDescription>
               Una vez enviada, no podrás editarla. Asegúrate de que estás
               conforme con tu diseño antes de continuar.
@@ -235,6 +244,7 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+      </div>
+    </>
   )
 }

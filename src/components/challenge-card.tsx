@@ -19,7 +19,7 @@ const VIEWPORT_LABEL: Record<string, string> = {
 
 export function ChallengeCard({ challenge }: { challenge: Challenge }) {
   return (
-    <Link href={`/challenge/${challenge.slug}`}>
+    <Link href={`/challenge/${challenge.slug}`} className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
       <Card className="hover:border-accent/50 min-h-52 transition-colors">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
