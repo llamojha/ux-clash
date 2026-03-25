@@ -40,7 +40,7 @@ export function UserMenu() {
 
   return (
     <div className="flex items-center gap-2">
-      <a href="/profile" className="flex items-center gap-2 rounded hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+      <a href="/profile" className="flex items-center gap-2 rounded hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
         {avatar && (
           <img src={avatar} alt={name} className="size-7 rounded-full" />
         )}

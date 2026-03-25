@@ -160,14 +160,14 @@ export default async function SubmissionPage({
             {challenge && (
               <Link
                 href={`/challenge/${challenge.slug}`}
-                className="hover:text-foreground block transition-colors"
+                className="hover:text-accent block transition-colors"
               >
                 ← Volver al reto
               </Link>
             )}
             <Link
               href="/"
-              className="hover:text-foreground block transition-colors"
+              className="hover:text-accent block transition-colors"
             >
               ← Inicio
             </Link>

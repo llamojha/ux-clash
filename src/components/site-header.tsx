@@ -20,13 +20,13 @@ export function SiteHeader() {
           <nav className="flex items-center gap-2 sm:gap-4">
             <Link
               href="/challenges"
-              className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="text-muted-foreground hover:text-accent rounded text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               Retos
             </Link>
             <Link
               href="/leaderboard"
-              className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="text-muted-foreground hover:text-accent rounded text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               Leaderboard
             </Link>

@@ -172,7 +172,7 @@ function ChallengeLeaderboard({
         <>
           <ChallengeCard challenge={challenge} />
           {submissions.length > 0 ? (
-            <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               {submissions.map((s, i) => (
                 <SubmissionCard
                   key={s.id}

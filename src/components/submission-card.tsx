@@ -17,22 +17,14 @@ export function SubmissionCard({
   viewport?: string
 }) {
   return (
-    <div className="border-border relative flex gap-4 rounded-lg border p-3 transition-colors hover:bg-muted/50">
-      <Link href={`/submission/${submission.id}`} className="absolute inset-0" aria-label={`Ver entry de ${submission.username ?? "Anónimo"}`} />
-      <div className="text-muted-foreground flex w-6 shrink-0 items-start justify-center pt-1 font-mono text-sm font-bold">
-        {rank}
-      </div>
-      <div className="w-32 shrink-0">
-        <SubmissionPreview html={submission.html} css={submission.css} viewport={viewport} />
-      </div>
-      <div className="flex min-w-0 flex-1 flex-col justify-between">
+    <div className="border-border relative overflow-hidden rounded-lg border transition-all hover:border-accent/50 hover:shadow-[0_0_16px_rgba(74,222,128,0.15)] hover:-translate-y-0.5">
+      <Link href={`/submission/${submission.id}`} className="absolute inset-0 z-0" aria-label={`Ver entry de ${submission.username ?? "Anónimo"}`} />
+      <SubmissionPreview html={submission.html} css={submission.css} viewport={viewport} />
+      <div className="flex items-center justify-between p-3">
         <div className="flex items-center gap-2">
+          <span className="text-muted-foreground font-mono text-sm font-bold">#{rank}</span>
           {submission.avatar_url && (
-            <img
-              src={submission.avatar_url}
-              alt=""
-              className="size-5 rounded-full"
-            />
+            <img src={submission.avatar_url} alt="" className="size-5 rounded-full" />
           )}
           <span className="truncate text-sm font-medium">
             {submission.username ?? "Anónimo"}

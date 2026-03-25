@@ -104,7 +104,7 @@ export default async function ChallengePage({
         ) : (
           <Link
             href={`/editor/${challenge.slug}`}
-            className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-[0_0_16px_rgba(74,222,128,0.2)] inline-flex h-10 items-center justify-center rounded-xl px-6 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="bg-accent text-accent-foreground hover:shadow-[0_0_16px_rgba(74,222,128,0.3)] hover:-translate-y-0.5 active:translate-y-0 inline-flex h-10 items-center justify-center rounded-xl px-6 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             Abrir editor
           </Link>

@@ -156,7 +156,7 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
         <div className="flex items-center gap-3 px-4 py-2">
           <button
             onClick={() => setBriefOpen(!briefOpen)}
-            className="text-muted-foreground hover:text-foreground flex shrink-0 items-center gap-1.5 transition-colors"
+            className="text-muted-foreground hover:text-accent flex shrink-0 items-center gap-1.5 transition-colors"
             aria-expanded={briefOpen}
             aria-label="Ver detalles del reto"
           >

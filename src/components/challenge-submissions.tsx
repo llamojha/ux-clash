@@ -48,7 +48,7 @@ export async function ChallengeSubmissions({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid gap-3 sm:grid-cols-2">
       {entries.map((submission, i) => (
         <SubmissionCard
           key={submission.id}

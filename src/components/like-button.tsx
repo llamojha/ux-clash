@@ -9,10 +9,12 @@ export function LikeButton({
   submissionId,
   initialCount,
   initialLiked,
+  size = "sm",
 }: {
   submissionId: string
   initialCount: number
   initialLiked: boolean
+  size?: "sm" | "lg"
 }) {
   const [liked, setLiked] = useState(initialLiked)
   const [count, setCount] = useState(initialCount)
@@ -69,9 +71,9 @@ export function LikeButton({
       aria-label={liked ? "Quitar like" : "Dar like"}
     >
       <Heart
-        className={cn("size-4", liked && "fill-accent text-accent")}
+        className={cn(size === "lg" ? "size-5" : "size-4", liked && "fill-accent text-accent")}
       />
-      <span className="font-mono text-xs">{count}</span>
+      <span className={cn("font-mono", size === "lg" ? "text-sm font-semibold" : "text-xs")}>{count}</span>
     </button>
   )
 }

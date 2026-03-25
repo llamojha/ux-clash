@@ -2,8 +2,9 @@ import Link from "next/link"
 import { PageShell } from "@/components/page-shell"
 import { ChallengeCard } from "@/components/challenge-card"
 import { Card, CardContent } from "@/components/ui/card"
-import { LikeButton } from "@/components/like-button"
+import { SubmissionCard } from "@/components/submission-card"
 import { SubmissionPreview } from "@/components/submission-preview"
+import { LikeButton } from "@/components/like-button"
 import { Zap, Calendar, Trophy, Globe } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/database.types"
@@ -83,7 +84,7 @@ export default async function HomePage() {
         <div className="mt-8">
           <Link
             href="/challenges"
-            className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-[0_0_16px_rgba(74,222,128,0.2)] inline-flex h-10 items-center justify-center rounded-xl px-6 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="bg-accent text-accent-foreground hover:shadow-[0_0_16px_rgba(74,222,128,0.3)] hover:-translate-y-0.5 active:translate-y-0 inline-flex h-10 items-center justify-center rounded-xl px-6 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             Ver retos
           </Link>
@@ -109,11 +110,10 @@ export default async function HomePage() {
             <Trophy className="text-accent size-5" />
             Ranking diario
           </h2>
-          <RankingCard
+          <RankingEntries
             entries={dailyData.entries}
             likedIds={dailyData.likedIds}
             hasChallenge={!!daily}
-            viewport={daily?.viewport}
           />
         </div>
 
@@ -134,11 +134,10 @@ export default async function HomePage() {
             <Trophy className="text-accent size-5" />
             Ranking semanal
           </h2>
-          <RankingCard
+          <RankingEntries
             entries={weeklyData.entries}
             likedIds={weeklyData.likedIds}
             hasChallenge={!!weekly}
-            viewport={weekly?.viewport}
           />
         </div>
       </section>
@@ -166,16 +165,14 @@ export default async function HomePage() {
   )
 }
 
-function RankingCard({
+function RankingEntries({
   entries,
   likedIds,
   hasChallenge,
-  viewport,
 }: {
   entries: Submission[]
   likedIds: Set<string>
   hasChallenge: boolean
-  viewport?: string
 }) {
   if (entries.length === 0) {
     return (
@@ -192,30 +189,29 @@ function RankingCard({
       {entries.map((submission, i) => (
         <div
           key={submission.id}
-          className="border-border flex overflow-hidden rounded-lg border"
+          className="border-border flex overflow-hidden rounded-lg border transition-all hover:border-accent/50 hover:shadow-[0_0_16px_rgba(74,222,128,0.15)] hover:-translate-y-0.5"
         >
-          <div className="flex w-1/2 flex-col justify-center gap-1 p-3">
+          <div className="flex w-1/2 flex-col justify-between p-4">
+            <span className="text-accent font-mono text-2xl font-bold">#{i + 1}</span>
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground font-mono text-xs font-bold">
-                #{i + 1}
-              </span>
               {submission.avatar_url && (
-                <img src={submission.avatar_url} alt="" className="size-5 rounded-full" />
+                <img src={submission.avatar_url} alt="" className="size-6 rounded-full" />
               )}
               <span className="truncate text-sm font-medium">
                 {submission.username ?? "Anónimo"}
               </span>
             </div>
-            <div>
+            <div className="self-end">
               <LikeButton
                 submissionId={submission.id}
                 initialCount={submission.social_score ?? 0}
                 initialLiked={likedIds.has(submission.id)}
+                size="lg"
               />
             </div>
           </div>
           <div className="w-1/2">
-            <SubmissionPreview html={submission.html} css={submission.css ?? ""} viewport={viewport} />
+            <SubmissionPreview html={submission.html} css={submission.css ?? ""} />
           </div>
         </div>
       ))}
