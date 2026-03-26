@@ -127,7 +127,7 @@
 
 ---
 
-## Phase 4 — Content + Polish
+## Phase 4 — Content + Polish ✅
 
 **Goal:** Full challenge set, UX polish, hackathon submission readiness.
 
@@ -142,6 +142,10 @@
   - [x] Demo link
   - [x] Screenshots/GIFs
   - [x] How CubePath was used
+- [x] User profile pages (`/profile` auth + `/user/[username]` public + OG image)
+- [x] Hover effects: accent glow + lift on cards and CTA buttons, green text on interactive elements
+- [x] Unified submission card layout across all pages
+- [x] Editor: close confirm modal before submit, redirect to submission page on success
 - [ ] Final deploy + smoke test on CubePath
 - [ ] Register project via GitHub issue
 
