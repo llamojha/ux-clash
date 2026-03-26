@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Banner Oferta - Codebase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-100 min-h-screen antialiased">
+    <div class="fixed inset-x-0 top-0 z-50 border-b border-amber-300 bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50 shadow-sm">
+      <div class="mx-auto flex h-20 max-w-6xl items-center gap-6 px-6">
+        <div class="flex min-w-0 flex-1 items-center gap-4">
+          <span class="inline-flex shrink-0 rounded-full bg-rose-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+            Oferta Flash
+          </span>
+
+          <p class="truncate text-sm text-slate-800">
+            <span class="font-semibold">Codebase:</span>
+            50% de descuento en cursos premium. Expira pronto.
+          </p>
+
+          <div class="hidden w-52 shrink-0 md:block">
+            <div class="mb-1 flex items-center justify-between text-xs text-slate-600">
+              <span>Expira en 02:14:38</span>
+              <span class="font-medium text-rose-700">78%</span>
+            </div>
+            <div class="h-2 rounded-full bg-slate-200">
+              <div class="h-2 w-[78%] rounded-full bg-gradient-to-r from-rose-500 to-orange-500"></div>
+            </div>
+          </div>
+        </div>
+
+        <a
+          href="#"
+          class="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+        >
+          Aprovechar oferta
+        </a>
+
+        <button
+          type="button"
+          aria-label="Cerrar notificación"
+          class="rounded-md p-2 text-slate-500 transition hover:bg-slate-200 hover:text-slate-700"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+            <path d="M6.225 4.811a.75.75 0 0 1 1.06 0L12 9.525l4.715-4.714a.75.75 0 1 1 1.06 1.06L13.061 10.586l4.714 4.715a.75.75 0 1 1-1.06 1.06L12 11.647l-4.714 4.714a.75.75 0 1 1-1.06-1.06l4.714-4.715-4.715-4.714a.75.75 0 0 1 0-1.061Z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-6xl px-6 pt-28">
+      <h1 class="text-3xl font-bold text-slate-900">Contenido de la página</h1>
+      <p class="mt-3 text-slate-600">
+        El banner está fijo arriba para ser visible, pero mantiene una altura compacta para no ser invasivo.
+      </p>
+    </main>
+  </body>
+</html>

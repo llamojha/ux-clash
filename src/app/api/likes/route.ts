@@ -61,17 +61,11 @@ export async function POST(request: Request) {
     liked = true
   }
 
-  // Get updated count and sync social_score
+  // Get updated count (social_score synced automatically via DB trigger)
   const { count } = await supabase
     .from("uxclash_likes")
     .select("*", { count: "exact", head: true })
     .eq("submission_id", submission_id)
 
-  const newCount = count ?? 0
-  await supabase
-    .from("uxclash_submissions")
-    .update({ social_score: newCount })
-    .eq("id", submission_id)
-
-  return NextResponse.json({ liked, count: newCount })
+  return NextResponse.json({ liked, count: count ?? 0 })
 }

@@ -12,7 +12,7 @@ Diseña interfaces con HTML + Tailwind para retos reales, compite en un leaderbo
 
 UX Clash es una plataforma donde diseñadores y developers frontend resuelven retos de interfaz usando HTML + CSS/Tailwind en un editor en vivo. Cada reto tiene un escenario real (login de app, pricing page, dashboard…) y los participantes compiten por likes en un leaderboard público.
 
-### Core Loop
+### Flujo principal
 
 1. Elige un reto (diario o semanal)
 2. Abre el editor con preview en tiempo real
@@ -23,15 +23,20 @@ UX Clash es una plataforma donde diseñadores y developers frontend resuelven re
 
 ## Screenshots
 
-<!-- TODO: Add screenshots/GIFs -->
-> Screenshots coming soon. The app is live at [ux-clash.amllamojha.com](https://ux-clash.amllamojha.com/)
+| Home | Editor |
+|------|--------|
+| ![Home](docs/screenshots/ux-homepage.png) | ![Editor](docs/screenshots/ux-editor.png) |
 
-## Tech Stack
+| Ranking | Preview Modal |
+|---------|---------------|
+| ![Ranking](docs/screenshots/ux-ranking.png) | ![Preview Modal](docs/screenshots/ux-modal.png) |
 
-| Layer | Technology |
-|-------|-----------|
+## Stack técnico
+
+| Capa | Tecnología |
+|------|-----------|
 | Framework | Next.js 16 (App Router, React 19) |
-| Language | TypeScript (strict) |
+| Lenguaje | TypeScript (strict) |
 | UI | shadcn/ui + Tailwind CSS v4 |
 | Editor | Monaco Editor |
 | Auth + DB | Supabase (PostgreSQL + GitHub OAuth) |
@@ -40,55 +45,49 @@ UX Clash es una plataforma donde diseñadores y developers frontend resuelven re
 
 ## CubePath
 
-UX Clash is deployed on a **CubePath VPS** using [Dokploy](https://dokploy.com/) for Git-based auto-deploy:
+UX Clash corre en un **VPS de CubePath** ([cubepath.com](https://cubepath.com)), usando [Dokploy](https://dokploy.com/) como plataforma de despliegue:
 
-- Docker image built with `oven/bun` (multi-stage: deps → build → run)
-- Next.js standalone output for minimal image size
-- Supabase Cloud for managed PostgreSQL + Auth
-- Auto-deploy on push to `main` via Dokploy's GitHub integration
+- **Servidor:** VPS de CubePath con Dokploy instalado para gestionar servicios
+- **App:** Next.js desplegado como servicio en Dokploy, conectado al repo de GitHub para auto-deploy en cada push a `main`
+- **Build:** Docker multi-stage con `oven/bun` — deps → build → standalone output para imagen mínima
+- **Base de datos:** Supabase Cloud (PostgreSQL + Auth gestionado), conectado via variables de entorno en Dokploy
+- **Dominio:** Dominio personalizado configurado a través de Dokploy con SSL automático
 
-## Development
+## Desarrollo local
 
 ```bash
-# Clone
+# Clonar
 git clone https://github.com/amllamojha/ux-clash.git
 cd ux-clash
 
-# Install
+# Instalar
 bun install
 
-# Environment variables
+# Variables de entorno
 cp .env.example .env.local
-# Fill in:
+# Rellenar:
 #   NEXT_PUBLIC_SUPABASE_URL=
 #   NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
-# Run
+# Ejecutar
 bun dev
 ```
 
-## Project Structure
+## Estructura del proyecto
 
 ```
 src/
-├── app/              # Next.js App Router pages + API routes
+├── app/              # Páginas + API routes (Next.js App Router)
 │   ├── api/          # Submissions, likes
-│   ├── challenge/    # Challenge detail
-│   ├── challenges/   # Challenge list
-│   ├── editor/       # Code editor arena
-│   ├── leaderboard/  # Global leaderboard
-│   └── submission/   # Public submission page
-├── components/       # React components (shadcn/ui + custom)
-└── lib/              # Supabase clients, utils, sanitization
+│   ├── challenge/    # Detalle de reto
+│   ├── challenges/   # Lista de retos
+│   ├── editor/       # Editor de código (arena)
+│   ├── leaderboard/  # Leaderboard global
+│   └── submission/   # Página pública de submission
+├── components/       # Componentes React (shadcn/ui + custom)
+└── lib/              # Clientes Supabase, utils, sanitización
 ```
 
-## Docs
-
-- [Roadmap](docs/roadmap.md) — MVP phases and timeline
-- [PRD](docs/prd.md) — Product requirements
-- [Design](docs/design.md) — UX principles and visual style
-- [Hackathon Rules](docs/hackathon.md) — CubePath 2026 hackathon rules
-
-## License
+## Licencia
 
 MIT
