@@ -49,8 +49,7 @@ UX Clash corre en un **VPS de CubePath** ([cubepath.com](https://cubepath.com)),
 
 - **Servidor:** VPS de CubePath con Dokploy instalado para gestionar servicios
 - **App:** Next.js desplegado como servicio en Dokploy, conectado al repo de GitHub para auto-deploy en cada push a `main`
-- **Build:** Docker multi-stage con `oven/bun` — deps → build → standalone output para imagen mínima
-- **Base de datos:** Supabase Cloud (PostgreSQL + Auth gestionado), conectado via variables de entorno en Dokploy
+- **Build:** [Railpack](https://railpack.io/) — detección automática del stack y build optimizado sin Dockerfile
 - **Dominio:** Dominio personalizado configurado a través de Dokploy con SSL automático
 
 ## Desarrollo local

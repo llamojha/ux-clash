@@ -33,7 +33,7 @@ export function SubmissionPreview({ html, css, viewport = "desktop" }: { html: s
           <div className="h-[600px] w-full overflow-auto rounded-md">
             <iframe
               srcDoc={doc}
-              sandbox=""
+              sandbox="allow-scripts"
               className={viewport === "mobile" ? "mx-auto h-[812px] w-[375px] border border-border rounded-md" : "h-[800px] w-full"}
               title="Vista previa interactiva"
             />
