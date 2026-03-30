@@ -1,15 +1,23 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { Metadata } from "next"
+import { AiFeedbackPanel } from "@/components/ai-feedback-panel"
 import { PageShell } from "@/components/page-shell"
 import { LikeButton } from "@/components/like-button"
 import { ShareButton } from "@/components/share-button"
+import {
+  AI_STATUSES,
+  type FeedbackStateResponse,
+  type ScoreResult,
+} from "@/lib/ai/types"
+import { jsonToStringArray } from "@/lib/ai/schema"
 import { buildSrcdoc } from "@/lib/srcdoc"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/database.types"
 
 type Submission = Database["public"]["Tables"]["uxclash_submissions"]["Row"]
 type Challenge = Database["public"]["Tables"]["uxclash_challenges"]["Row"]
+type AiScore = Database["public"]["Tables"]["uxclash_ai_scores"]["Row"]
 
 export const dynamic = "force-dynamic"
 
@@ -31,10 +39,42 @@ async function getSubmissionWithChallenge(id: string) {
     .eq("id", (submission as Submission).challenge_id)
     .single()
 
+  const { data: aiScore } = await supabase
+    .from("uxclash_ai_scores")
+    .select("*")
+    .eq("submission_id", id)
+    .maybeSingle()
+
   return {
     submission: submission as Submission,
     challenge: challenge as Challenge | null,
+    aiScore: aiScore as AiScore | null,
   }
+}
+
+function normalizeInitialScore(aiScore: AiScore | null): ScoreResult | null {
+  if (!aiScore) return null
+
+  return {
+    clarity: Number(aiScore.clarity),
+    visual_hierarchy: Number(aiScore.visual_hierarchy),
+    challenge_compliance: Number(aiScore.challenge_compliance),
+    usability: Number(aiScore.usability),
+    accessibility: Number(aiScore.accessibility),
+    visual_quality: Number(aiScore.visual_quality),
+    total: Number(aiScore.total),
+    strengths: jsonToStringArray(aiScore.strengths),
+    weaknesses: jsonToStringArray(aiScore.weaknesses),
+    suggestion: aiScore.suggestion ?? "",
+  }
+}
+
+function normalizeInitialStatus(
+  status: string
+): FeedbackStateResponse["status"] {
+  return AI_STATUSES.includes(status as FeedbackStateResponse["status"])
+    ? (status as FeedbackStateResponse["status"])
+    : "pending"
 }
 
 export async function generateMetadata({
@@ -70,7 +110,7 @@ export default async function SubmissionPage({
   const result = await getSubmissionWithChallenge(id)
   if (!result) notFound()
 
-  const { submission, challenge } = result
+  const { submission, challenge, aiScore } = result
 
   const supabase = await createClient()
   const {
@@ -93,86 +133,100 @@ export default async function SubmissionPage({
     viewport === "mobile"
       ? "h-full w-[375px] max-w-full mx-auto"
       : "h-full w-full"
+  const initialAiState: FeedbackStateResponse = {
+    status: normalizeInitialStatus(submission.ai_status),
+    summary: {
+      ai_score: submission.ai_score,
+      provider: submission.ai_provider,
+      model: submission.ai_model,
+    },
+    score: normalizeInitialScore(aiScore),
+    error: submission.ai_error,
+  }
 
   return (
     <PageShell className="max-w-7xl">
-      <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
-        {/* Preview */}
-        <div className="bg-muted flex-1 overflow-hidden rounded-lg border">
-          <iframe
-            srcDoc={buildSrcdoc(submission.html, submission.css)}
-            sandbox="allow-scripts"
-            className={`min-h-[60vh] ${iframeClass}`}
-            title="Vista previa de la submission"
-          />
-        </div>
-
-        {/* Sidebar */}
-        <div className="w-full space-y-6 lg:w-72 lg:shrink-0">
-          {/* Challenge info */}
-          {challenge && (
-            <div>
-              <p className="text-muted-foreground text-xs uppercase tracking-wide">
-                Reto
-              </p>
-              <Link
-                href={`/challenge/${challenge.slug}`}
-                className="text-accent hover:underline font-medium"
-              >
-                {challenge.title}
-              </Link>
-            </div>
-          )}
-
-          {/* Author */}
-          <div className="flex items-center gap-2">
-            {submission.avatar_url && (
-              <img
-                src={submission.avatar_url}
-                alt=""
-                className="size-8 rounded-full"
-              />
-            )}
-            <span className="font-medium">
-              {submission.username ?? "Anónimo"}
-            </span>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-4">
-            <LikeButton
-              submissionId={submission.id}
-              initialCount={submission.social_score ?? 0}
-              initialLiked={liked}
-            />
-            <ShareButton
-              url={`/submission/${submission.id}`}
-              title={
-                challenge
-                  ? `"${challenge.title}" por ${submission.username ?? "Anónimo"}`
-                  : "Entry en UX Clash"
-              }
+      <div className="space-y-6">
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+          {/* Preview */}
+          <div className="bg-muted flex-1 overflow-hidden rounded-lg border">
+            <iframe
+              srcDoc={buildSrcdoc(submission.html, submission.css)}
+              sandbox="allow-scripts"
+              className={`min-h-[60vh] ${iframeClass}`}
+              title="Vista previa de la submission"
             />
           </div>
 
-          {/* Nav links */}
-          <nav className="text-muted-foreground space-y-2 text-sm">
+          {/* Sidebar */}
+          <div className="w-full space-y-6 lg:w-72 lg:shrink-0">
+            {/* Challenge info */}
             {challenge && (
+              <div>
+                <p className="text-muted-foreground text-xs uppercase tracking-wide">
+                  Reto
+                </p>
+                <Link
+                  href={`/challenge/${challenge.slug}`}
+                  className="text-accent hover:underline font-medium"
+                >
+                  {challenge.title}
+                </Link>
+              </div>
+            )}
+
+            {/* Author */}
+            <div className="flex items-center gap-2">
+              {submission.avatar_url && (
+                <img
+                  src={submission.avatar_url}
+                  alt=""
+                  className="size-8 rounded-full"
+                />
+              )}
+              <span className="font-medium">
+                {submission.username ?? "Anónimo"}
+              </span>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-4">
+              <LikeButton
+                submissionId={submission.id}
+                initialCount={submission.social_score ?? 0}
+                initialLiked={liked}
+              />
+              <ShareButton
+                url={`/submission/${submission.id}`}
+                title={
+                  challenge
+                    ? `"${challenge.title}" por ${submission.username ?? "Anónimo"}`
+                    : "Entry en UX Clash"
+                }
+              />
+            </div>
+
+            {/* Nav links */}
+            <nav className="text-muted-foreground space-y-2 text-sm">
+              {challenge && (
+                <Link
+                  href={`/challenge/${challenge.slug}`}
+                  className="hover:text-accent block transition-colors"
+                >
+                  ← Volver al reto
+                </Link>
+              )}
               <Link
-                href={`/challenge/${challenge.slug}`}
+                href="/"
                 className="hover:text-accent block transition-colors"
               >
-                ← Volver al reto
+                ← Inicio
               </Link>
-            )}
-            <Link
-              href="/"
-              className="hover:text-accent block transition-colors"
-            >
-              ← Inicio
-            </Link>
-          </nav>
+            </nav>
+          </div>
         </div>
+
+        <AiFeedbackPanel submissionId={submission.id} initialState={initialAiState} />
       </div>
     </PageShell>
   )

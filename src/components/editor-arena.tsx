@@ -22,8 +22,16 @@ import { CountdownTimer, isChallengeEnded } from "@/components/countdown-timer"
 import type { Database } from "@/lib/database.types"
 
 type Challenge = Database["public"]["Tables"]["uxclash_challenges"]["Row"]
+type PreviewViewport = "mobile" | "desktop" | "both"
+
+function normalizePreviewViewport(viewport: string): PreviewViewport {
+  return viewport === "mobile" || viewport === "desktop" || viewport === "both"
+    ? viewport
+    : "desktop"
+}
 
 export function EditorArena({ challenge }: { challenge: Challenge }) {
+  const previewViewport = normalizePreviewViewport(challenge.viewport)
   const [code, setCode] = useState({
     html: challenge.template_html ?? "",
     css: challenge.template_css ?? "",
@@ -225,7 +233,7 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
         <PreviewPanel
           html={code.html}
           css={code.css}
-          defaultViewport={challenge.viewport}
+          defaultViewport={previewViewport}
         />
       </div>
 
