@@ -165,14 +165,14 @@ function ChallengeLeaderboard({
   likedIds: Set<string>
 }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <h2 className="text-lg font-semibold">{label}</h2>
 
       {challenge ? (
         <>
           <ChallengeCard challenge={challenge} />
           {submissions.length > 0 ? (
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {submissions.map((s, i) => (
                 <SubmissionCard
                   key={s.id}

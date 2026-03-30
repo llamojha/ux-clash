@@ -39,7 +39,7 @@ export default async function ChallengesPage() {
         </div>
 
         {active.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             {active.map((challenge) => (
               <ChallengeCard key={challenge.id} challenge={challenge} />
             ))}
@@ -55,7 +55,7 @@ export default async function ChallengesPage() {
         {past.length > 0 && (
           <>
             <h2 className="text-lg font-semibold pt-6">Retos anteriores</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               {past.map((challenge) => (
                 <ChallengeCard key={challenge.id} challenge={challenge} />
               ))}

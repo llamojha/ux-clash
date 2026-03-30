@@ -114,6 +114,7 @@ export default async function HomePage() {
             entries={dailyData.entries}
             likedIds={dailyData.likedIds}
             hasChallenge={!!daily}
+            viewport={daily?.viewport}
           />
         </div>
 
@@ -138,6 +139,7 @@ export default async function HomePage() {
             entries={weeklyData.entries}
             likedIds={weeklyData.likedIds}
             hasChallenge={!!weekly}
+            viewport={weekly?.viewport}
           />
         </div>
       </section>
@@ -169,10 +171,12 @@ function RankingEntries({
   entries,
   likedIds,
   hasChallenge,
+  viewport,
 }: {
   entries: Submission[]
   likedIds: Set<string>
   hasChallenge: boolean
+  viewport?: string | null
 }) {
   if (entries.length === 0) {
     return (
@@ -211,7 +215,7 @@ function RankingEntries({
             </div>
           </div>
           <div className="w-1/2">
-            <SubmissionPreview html={submission.html} css={submission.css ?? ""} />
+            <SubmissionPreview html={submission.html} css={submission.css ?? ""} viewport={viewport ?? undefined} />
           </div>
         </div>
       ))}

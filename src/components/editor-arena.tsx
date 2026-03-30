@@ -32,8 +32,47 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
   const [submitted, setSubmitted] = useState(false)
   const [briefOpen, setBriefOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const [splitPct, setSplitPct] = useState(50)
+  const dragging = useRef(false)
+  const containerRef = useRef<HTMLDivElement>(null)
   const ended = isChallengeEnded(challenge.ends_at)
   const codeRef = useRef(code)
+
+  const [isDragging, setIsDragging] = useState(false)
+
+  const onDividerDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    dragging.current = true
+    setIsDragging(true)
+    document.body.style.cursor = "col-resize"
+    document.body.style.userSelect = "none"
+  }, [])
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!dragging.current || !containerRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      const pct = ((e.clientX - rect.left) / rect.width) * 100
+      setSplitPct(Math.min(80, Math.max(20, pct)))
+    }
+    const resetBody = () => {
+      document.body.style.cursor = ""
+      document.body.style.userSelect = ""
+    }
+    const onUp = () => {
+      if (!dragging.current) return
+      dragging.current = false
+      setIsDragging(false)
+      resetBody()
+    }
+    window.addEventListener("mousemove", onMove)
+    window.addEventListener("mouseup", onUp)
+    return () => {
+      window.removeEventListener("mousemove", onMove)
+      window.removeEventListener("mouseup", onUp)
+      resetBody()
+    }
+  }, [])
 
   const handleChange = useCallback((c: { html: string; css: string }) => {
     setCode(c)
@@ -214,19 +253,27 @@ export function EditorArena({ challenge }: { challenge: Challenge }) {
       </div>
 
       {/* Editor + Preview */}
-      <div className="grid min-h-0 flex-1 grid-cols-2">
-        <div className="border-border/50 border-r">
+      <div ref={containerRef} className={`flex min-h-0 flex-1${isDragging ? " [&>*]:pointer-events-none" : ""}`}>
+        <div className="min-w-0 overflow-hidden" style={{ width: `${splitPct}%` }}>
           <CodeEditor
             defaultHtml={challenge.template_html ?? ""}
             defaultCss={challenge.template_css ?? ""}
             onChange={handleChange}
           />
         </div>
-        <PreviewPanel
-          html={code.html}
-          css={code.css}
-          defaultViewport={challenge.viewport}
-        />
+        <div
+          onMouseDown={onDividerDown}
+          className="border-border/50 hover:bg-accent/50 group relative w-1.5 shrink-0 cursor-col-resize border-x transition-colors"
+        >
+          <div className="bg-muted-foreground/40 group-hover:bg-accent-foreground/60 absolute top-1/2 left-1/2 h-8 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <PreviewPanel
+            html={code.html}
+            css={code.css}
+            defaultViewport={challenge.viewport}
+          />
+        </div>
       </div>
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
